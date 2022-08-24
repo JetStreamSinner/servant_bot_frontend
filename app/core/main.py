@@ -16,7 +16,7 @@ async def root_handler(event: types.Message):
 
 
 async def main():
-    bot_token = "5784798752:AAH2WBi463u3EZsGvMnqnO6WfZ3UKA1rlaM"
+    bot_token = ""
     bot = Bot(token=bot_token)
 
     try:
