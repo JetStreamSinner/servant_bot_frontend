@@ -1,22 +1,15 @@
 import asyncio
+import os
 
-import requests
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
 
-
-async def root_handler(event: types.Message):
-    proxy_service_url = "http://127.0.0.1:8000"
-    service_list_router = "/services_list"
-    target_url = proxy_service_url + service_list_router
-    services_list_request = requests.get(target_url)
-    services = services_list_request.json()
-    keyboard_markup = types.ReplyKeyboardMarkup(row_width=3)
-    keyboard_markup.row(*[types.KeyboardButton(service["service_name"]) for service in services])
-    await event.reply("Services list", reply_markup=keyboard_markup)
+from commands_handlers import root_handler
 
 
 async def main():
-    bot_token = ""
+    load_dotenv()
+    bot_token = os.getenv("token")
     bot = Bot(token=bot_token)
 
     try:
