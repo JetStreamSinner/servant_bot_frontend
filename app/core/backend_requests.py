@@ -1,9 +1,9 @@
 import os
-from typing import Dict, Any
+from typing import Dict, Any, List
 import requests
 
 
-def get_services() -> Dict[str, Any]:
+def get_services() -> List[Dict[str, Any]]:
     # TODO Use reverse proxy
     backend_url = os.getenv("backend")
     service_list_router = "/services_list"
