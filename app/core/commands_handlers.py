@@ -1,7 +1,34 @@
 from aiogram import types
+
 from keyboard_markups import create_main_markup
 
 
-async def root_handler(event: types.Message):
+async def root_handler(message: types.Message):
     main_menu_markup = create_main_markup()
-    await event.reply("Main", reply_markup=main_menu_markup)
+    await message.reply(text="Root handler", reply_markup=main_menu_markup)
+
+
+async def about_handler(message: types.Message):
+    await message.answer(text="About handler")
+
+
+async def services_list_handler(message: types.Message):
+    await message.answer(text="Service list handler")
+
+
+def get_commands_handler_bind():
+    binding = [
+        {
+            "commands": ["start"],
+            "handler": root_handler
+        },
+        {
+            "commands": ["about"],
+            "handler": about_handler
+        },
+        {
+            "commands": ["services"],
+            "handler": services_list_handler
+        }
+    ]
+    return binding

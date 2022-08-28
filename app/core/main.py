@@ -1,23 +1,17 @@
-import asyncio
 import os
 
-from aiogram import Bot, Dispatcher
+import asyncio
 from dotenv import load_dotenv
-
-from commands_handlers import root_handler
+from bot_service import start_service
+from commands_handlers import get_commands_handler_bind
 
 
 async def main():
     load_dotenv()
-    bot_token = os.getenv("token")
-    bot = Bot(token=bot_token)
-
-    try:
-        dispatcher = Dispatcher(bot=bot)
-        dispatcher.register_message_handler(root_handler, commands={"start", "restart"})
-        await dispatcher.start_polling()
-    finally:
-        await bot.close()
-
+    service_config = {
+        "token": os.getenv("token"),
+        "handlers": get_commands_handler_bind()
+    }
+    await start_service(configuration=service_config)
 
 asyncio.run(main())
