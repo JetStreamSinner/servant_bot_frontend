@@ -1,4 +1,5 @@
 from aiogram import types
+
 from backend_requests import get_services
 
 
@@ -15,7 +16,9 @@ def create_main_markup():
 
 
 def services_list_markup():
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup = types.InlineKeyboardMarkup(row_width=1, resize_keyboard=True)
     services_list = get_services()
-    markup.row(*[service["service_name"] for service in services_list])
+    [markup.row(types.InlineKeyboardButton(service["service_name"], callback_data=service["service_id"])) for service in
+     services_list]
+
     return markup
