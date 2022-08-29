@@ -1,6 +1,7 @@
-from typing import Dict, Any
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from typing import Dict, Any
+
 from commands_handlers import HandlerType
 
 
@@ -14,9 +15,9 @@ async def start_service(configuration: Dict[str, Any]):
     for binding in commands_handler_bind:
         match binding["handler_type"]:
             case HandlerType.MessageHandler:
-                dispatcher.register_message_handler(binding["handler"], commands=binding["commands"])
+                dispatcher.register_message_handler(callback=binding["handler"], **binding["filters"])
             case HandlerType.CallbackQueryHandler:
-                dispatcher.register_callback_query_handler(callback=binding["handler"])
+                dispatcher.register_callback_query_handler(callback=binding["handler"], **binding["filters"])
 
     try:
         await dispatcher.start_polling()
