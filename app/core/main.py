@@ -1,3 +1,5 @@
+import logging
+
 import os
 
 import asyncio
@@ -8,6 +10,7 @@ from commands_handlers import get_commands_handler_bind
 
 async def main():
     load_dotenv()
+    logging.basicConfig(level=logging.DEBUG)
     service_config = {
         "token": os.getenv("token"),
         "handlers": get_commands_handler_bind()
