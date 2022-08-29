@@ -1,5 +1,6 @@
 from typing import Dict, Any
 from aiogram import Bot, Dispatcher
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from commands_handlers import HandlerType
 
 
@@ -8,7 +9,8 @@ async def start_service(configuration: Dict[str, Any]):
     bot = Bot(token=bot_token)
 
     commands_handler_bind = configuration["handlers"]
-    dispatcher = Dispatcher(bot=bot)
+    storage = MemoryStorage()
+    dispatcher = Dispatcher(bot=bot, storage=storage)
     for binding in commands_handler_bind:
         match binding["handler_type"]:
             case HandlerType.MessageHandler:
