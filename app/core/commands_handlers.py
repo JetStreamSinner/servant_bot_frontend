@@ -21,7 +21,7 @@ class TaskForm(StatesGroup):
 
 async def root_handler(message: types.Message):
     markup = create_main_markup()
-    await message.reply(text="Root handler", reply_markup=markup)
+    await message.answer(text="Root handler", reply_markup=markup)
 
 
 async def about_handler(message: types.Message):
@@ -53,6 +53,8 @@ async def next_argument_state_handler(message: types.Message, state: FSMContext)
     task_data = await state.get_data()
     arg_index = task_data["index"]
     if arg_index >= len(task_data["arguments"]):
+        await TaskForm.select_service.set()
+        await root_handler(message=message)
         return
 
     argument = task_data["arguments"][arg_index]
