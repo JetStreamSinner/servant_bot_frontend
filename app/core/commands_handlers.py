@@ -67,21 +67,24 @@ def get_commands_handler_bind():
     binding = [
         {
             "filters": {
-                "commands": ["start"]
+                "commands": ["start"],
+                "state": ["*"]
             },
             "handler": root_handler,
             "handler_type": HandlerType.MessageHandler
         },
         {
             "filters": {
-                "commands": ["about"]
+                "commands": ["about"],
+                "state": ["*"]
             },
             "handler": about_handler,
             "handler_type": HandlerType.MessageHandler
         },
         {
             "filters": {
-                "commands": ["services"]
+                "commands": ["services"],
+                "state": ["*"]
             },
             "handler": services_list_handler,
             "handler_type": HandlerType.MessageHandler
