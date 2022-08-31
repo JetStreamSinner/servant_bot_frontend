@@ -63,7 +63,7 @@ async def next_argument_state_handler(message: types.Message, state: FSMContext)
     if arg_index >= len(task_data["arguments"]):
         await TaskForm.select_service.set()
         response = backend_requests.post_task(service_id=task_data["service_id"], task_data=task_data["data"])
-        # TODO Handler response
+        await dependencies.show_result(message, response)
         await root_handler(message=message)
         return
 

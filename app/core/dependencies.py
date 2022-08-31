@@ -1,9 +1,10 @@
 import base64
 import io
 from typing import Any, Dict
-import argument_types
 
 from aiogram import types
+
+import argument_types
 
 
 def make_argument_message(arg_name: str, arg_description: str, arg_type: str):
@@ -49,6 +50,21 @@ async def resolve_argument(message: types.Message, raw_argument: Dict[str, Any])
 
     resolved_value = await resolve_value()
     return argument_name, resolved_value
+
+
+async def show_result(message: types.Message, response):
+    result_type = response["type"]
+
+    match result_type:
+        case argument_types.Image:
+            encoded_image = response["data"]
+            image_data = decode_text(text=encoded_image)
+            await message.answer_photo(photo=image_data)
+        case argument_types.Text:
+            response_text = response["data"]
+            await message.answer(text=response_text)
+        case _:
+            pass
 
 
 def encode_binary(raw: bytes):
