@@ -1,5 +1,7 @@
 import base64
-from typing import Any
+import io
+from typing import Any, Dict
+import argument_types
 
 from aiogram import types
 
@@ -21,6 +23,32 @@ async def send_req_for_arg(arg: Any, message: types.Message):
     answer = make_argument_message(arg_name=arg["argument_name"], arg_description=arg["argument_description"],
                                    arg_type=arg["type"])
     await send_message(chat_id=chat_id, text=answer)
+
+
+async def get_last_image_binary(message: types.Message):
+    last_image = message.photo.pop()
+    image_binary = io.BytesIO()
+    await last_image.download(destination_file=image_binary)
+    return image_binary.getvalue()
+
+
+async def resolve_argument(message: types.Message, raw_argument: Dict[str, Any]):
+    argument_name = raw_argument["argument_name"]
+    argument_type = raw_argument["type"]
+
+    async def resolve_value():
+        match argument_type:
+            case argument_types.Image:
+                image_data = await get_last_image_binary(message)
+                encoded_image = encode_binary(raw=image_data)
+                return encoded_image
+            case argument_types.Text:
+                return message.text
+            case _:
+                raise RuntimeError("Unknown argument type")
+
+    resolved_value = await resolve_value()
+    return argument_name, resolved_value
 
 
 def encode_binary(raw: bytes):

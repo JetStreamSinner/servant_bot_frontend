@@ -1,5 +1,4 @@
 import enum
-import io
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
@@ -7,7 +6,6 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 import backend_requests
 import dependencies
-import argument_types
 from keyboard_markups import create_main_markup, services_list_markup
 
 
@@ -55,26 +53,12 @@ async def select_service_handler(query: types.CallbackQuery, state: FSMContext):
 
 
 async def next_argument_state_handler(message: types.Message, state: FSMContext):
-
     task_data = await state.get_data()
     arg_index = task_data["index"]
 
-    prev_arg_index = arg_index - 1
-    prev_arg = task_data["arguments"][prev_arg_index]
-    prev_arg_name = prev_arg["argument_name"]
-    prev_arg_mime = prev_arg["type"]
-
-    match prev_arg_mime:
-        case argument_types.Image:
-            last_image = message.photo.pop()
-            image_binary = io.BytesIO()
-            await last_image.download(destination_file=image_binary)
-            encoded_image = dependencies.encode_binary(raw=image_binary.getvalue())
-            task_data["data"][prev_arg_name] = encoded_image
-        case argument_types.Text:
-            task_data["data"][prev_arg_name] = message.text
-        case _:
-            pass
+    prev_arg = task_data["arguments"][arg_index - 1]
+    (arg_name, arg_value) = await dependencies.resolve_argument(message=message, raw_argument=prev_arg)
+    task_data["data"][arg_name] = arg_value
 
     if arg_index >= len(task_data["arguments"]):
         await TaskForm.select_service.set()
