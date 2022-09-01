@@ -26,21 +26,21 @@ async def send_req_for_arg(arg: Any, message: types.Message):
     await send_message(chat_id=chat_id, text=answer)
 
 
-async def get_last_image_binary(message: types.Message):
+def get_last_image_binary(message: types.Message):
     last_image = message.photo.pop()
     image_binary = io.BytesIO()
-    await last_image.download(destination_file=image_binary)
+    last_image.download(destination_file=image_binary)
     return image_binary.getvalue()
 
 
-async def resolve_argument(message: types.Message, raw_argument: Dict[str, Any]):
+def resolve_argument(message: types.Message, raw_argument: Dict[str, Any]):
     argument_name = raw_argument["argument_name"]
     argument_type = raw_argument["type"]
 
-    async def resolve_value():
+    def resolve_value():
         match argument_type:
             case argument_types.Image:
-                image_data = await get_last_image_binary(message)
+                image_data = get_last_image_binary(message)
                 encoded_image = encode_binary(raw=image_data)
                 return encoded_image
             case argument_types.Text:
@@ -48,7 +48,7 @@ async def resolve_argument(message: types.Message, raw_argument: Dict[str, Any])
             case _:
                 raise RuntimeError("Unknown argument type")
 
-    resolved_value = await resolve_value()
+    resolved_value = resolve_value()
     return argument_name, resolved_value
 
 
