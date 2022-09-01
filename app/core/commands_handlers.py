@@ -57,8 +57,12 @@ async def next_argument_state_handler(message: types.Message, state: FSMContext)
     arg_index = task_data["index"]
 
     prev_arg = task_data["arguments"][arg_index - 1]
-    (arg_name, arg_value) = dependencies.resolve_argument(message=message, raw_argument=prev_arg)
+    arg_name, arg_value, resolving_status = await dependencies.resolve_argument(message=message, raw_argument=prev_arg)
     task_data["data"][arg_name] = arg_value
+    if not resolving_status:
+        await message.answer(text="Некорректный аргумент")
+        await TaskForm.next_argument.set()
+        return
 
     if arg_index >= len(task_data["arguments"]):
         await TaskForm.select_service.set()
